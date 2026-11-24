@@ -180,17 +180,18 @@ body.phase-login .stage .scenes { filter: saturate(1.05); }
   transition: opacity .7s var(--ease), visibility .7s;
 }
 .boot.done { opacity: 0; visibility: hidden; }
-.boot-logo {
-  display: grid;
-  grid-template-columns: repeat(2, 30px);
-  gap: 5px;
-  animation: boot-in 1s var(--out) both;
-}
-.boot-logo span { width: 30px; height: 30px; border-radius: 4px; }
-.boot-logo span:nth-child(1) { background: var(--pink); }
-.boot-logo span:nth-child(2) { background: var(--teal); }
-.boot-logo span:nth-child(3) { background: var(--sea); }
-.boot-logo span:nth-child(4) { background: var(--rose); }
+/* ---------- RA logo ---------- */
+.ra-logo { display: block; width: 100%; height: auto; overflow: visible; }
+.boot-logo { width: 130px; color: var(--mist); filter: drop-shadow(0 0 24px rgba(247,203,202,.35)); }
+.boot-logo .ra-r { animation: ra-r 1.1s var(--out) both; }
+.boot-logo .ra-a { animation: ra-a 1.1s .12s var(--out) both; fill: var(--pink); }
+@keyframes ra-r { from { opacity: 0; transform: translateX(-140px); } }
+@keyframes ra-a { from { opacity: 0; transform: translate(140px, 60px); } }
+.avatar .in-avatar { width: 62%; color: var(--ink); }
+.avatar .in-avatar .ra-a { fill: var(--slate); }
+.s-logo { display: inline-flex; align-items: center; gap: 12px; }
+.s-logo .ra-logo { width: 46px; color: var(--ink); }
+.s-logo .ra-a { fill: var(--pink-deep); }
 .boot-name {
   font-family: var(--serif);
   font-style: italic;
@@ -1099,17 +1100,12 @@ body.scene-dark .hero-title { text-shadow: 0 6px 40px rgba(255,255,255,.25); }
 }
 .tb-app:hover .tb-tip { opacity: 1; transform: translate(-50%, 0); transition-delay: .4s; }
 
-.win-logo { display: grid; grid-template-columns: repeat(2, 8px); gap: 2px; transition: transform .2s var(--spring); }
-.win-logo i { width: 8px; height: 8px; border-radius: 2px; }
-.win-logo i:nth-child(1) { background: var(--pink-deep); }
-.win-logo i:nth-child(2) { background: var(--teal-deep); }
-.win-logo i:nth-child(3) { background: var(--teal); }
-.win-logo i:nth-child(4) { background: var(--slate); }
-.tb-start:hover .win-logo i:nth-child(1) { transform: translate(-1px, -1px); }
-.tb-start:hover .win-logo i:nth-child(2) { transform: translate(1px, -1px); }
-.tb-start:hover .win-logo i:nth-child(3) { transform: translate(-1px, 1px); }
-.tb-start:hover .win-logo i:nth-child(4) { transform: translate(1px, 1px); }
-.win-logo i { transition: transform .25s var(--spring); }
+.win-logo { display: block; width: 26px; color: var(--ink); transition: transform .2s var(--spring); }
+.win-logo .ra-r, .win-logo .ra-a { transition: transform .3s var(--spring); }
+.win-logo .ra-a { fill: var(--pink-deep); }
+.tb-start:hover .win-logo .ra-r { transform: translateX(-14px); }
+.tb-start:hover .win-logo .ra-a { transform: translateX(14px); }
+#startBtn.on .win-logo .ra-a { fill: var(--teal-deep); }
 
 .tb-weather {
   display: flex;
@@ -1370,6 +1366,7 @@ body.scene-dark .hero-title { text-shadow: 0 6px 40px rgba(255,255,255,.25); }
   border-bottom: 1px solid var(--line);
 }
 .s-logo { font-family: var(--serif); font-style: italic; font-size: 22px; margin-right: auto; }
+.s-logo .ra-logo { font-style: normal; }
 .s-links { display: flex; gap: 18px; font-size: 14px; }
 .s-links a { text-decoration: none; color: var(--slate); transition: color .2s; }
 .s-links a:hover { color: var(--ink); }

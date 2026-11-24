@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="290 350 460 270" fill="#ffffff">
+  <defs>
+    <mask id="cut">
+      <rect x="290" y="350" width="460" height="270" fill="#fff"/>
+      <path d="M592 368H604L733 607H686L600 448L528 580L502 555Z" fill="#000" stroke="#000" stroke-width="16" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <path mask="url(#cut)" d="M303 362H490C527 362 556 394 556 434C556 474 527 506 490 506H418L528 607H470L342 468H490C505 468 516 453 516 434C516 415 505 402 490 402H303Z"/>
+  <path d="M592 368H604L733 607H686L600 448L528 580L502 555Z"/>
+</svg>

@@ -16,7 +16,14 @@
     `<svg class="ico ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
   const tile = (app, size = '') =>
     `<span class="tile ${size}" style="--c:${app.color};${app.glyph ? `--g:${app.glyph}` : ''}">${icon(app.icon)}</span>`;
-  const avatarHTML = () => (PROFILE.photo ? `<img src="${esc(PROFILE.photo)}" alt="${esc(PROFILE.name)}">` : esc(PROFILE.initials));
+  let logoN = 0;
+  const RA_R = 'M303 362H490C527 362 556 394 556 434C556 474 527 506 490 506H418L528 607H470L342 468H490C505 468 516 453 516 434C516 415 505 402 490 402H303Z';
+  const RA_A = 'M592 368H604L733 607H686L600 448L528 580L502 555Z';
+  const logo = (cls = '') => {
+    const id = 'ra-cut-' + logoN++;
+    return `<svg class="ra-logo ${cls}" viewBox="290 350 460 270" fill="currentColor" role="img" aria-label="RA logo"><defs><mask id="${id}"><rect x="290" y="350" width="460" height="270" fill="#fff"/><path d="${RA_A}" fill="#000" stroke="#000" stroke-width="16" stroke-linejoin="round"/></mask></defs><path class="ra-r" mask="url(#${id})" d="${RA_R}"/><path class="ra-a" d="${RA_A}"/></svg>`;
+  };
+  const avatarHTML = () => (PROFILE.photo ? `<img src="${esc(PROFILE.photo)}" alt="${esc(PROFILE.name)}">` : logo('in-avatar'));
   const anim = (el, frames, opts) => (reduceMotion || !el.animate ? { finished: Promise.resolve(), cancel() {} } : el.animate(frames, opts));
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -42,6 +49,7 @@
     $$('[data-text]').forEach((el) => (el.textContent = PROFILE[el.dataset.text] || ''));
     $$('[data-avatar]').forEach((el) => (el.innerHTML = avatarHTML()));
     $$('[data-icon]').forEach((el) => (el.innerHTML = icon(el.dataset.icon)));
+    $$('[data-logo]').forEach((el) => (el.innerHTML = logo()));
 
     // Hero title split into animated characters
     const words = PROFILE.name.split(' ');
@@ -520,6 +528,7 @@
         if (id === 'calFlyout') Clock.renderCal();
         el.classList.add('open');
         if (id === 'startMenu') {
+          $('#startBtn').classList.add('on');
           const s = $('#smSearch');
           s.value = '';
           Search.run('');
@@ -530,6 +539,7 @@
     },
     closeAll() {
       $$('.flyout.open').forEach((f) => f.classList.remove('open'));
+      $('#startBtn').classList.remove('on');
       Ctx.close();
     },
   };
@@ -1008,7 +1018,7 @@
       const p = PROFILE;
       $('#simple').innerHTML = `
         <nav class="s-nav">
-          <span class="s-logo">${esc(p.name)}</span>
+          <span class="s-logo">${logo()}<span>${esc(p.name)}</span></span>
           <div class="s-links"><a href="#s-about">About</a><a href="#s-skills">Skills</a><a href="#s-exp">Experience</a><a href="#s-proj">Projects</a><a href="#s-edu">Education</a><a href="#s-contact">Contact</a></div>
           <button class="btn btn-dark" data-action="desktop">${icon('square')}Desktop view</button>
         </nav>

@@ -6,6 +6,7 @@
   <title>Raimi Akasyah — Junior Solution Architect</title>
   <meta name="description" content="Portfolio of Raimi Akasyah, Junior Solution Architect working on AI solutions, AWS, web development and UI/UX." />
   <meta name="theme-color" content="#5D6B6B" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -24,9 +25,7 @@
 
   <!-- ============ Boot screen ============ -->
   <div id="boot" class="boot" role="status" aria-label="Loading portfolio">
-    <div class="boot-logo">
-      <span></span><span></span><span></span><span></span>
-    </div>
+    <div class="boot-logo" data-logo></div>
     <div class="boot-name">RaimiOS</div>
     <div class="spinner" aria-hidden="true">
       <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i>
@@ -126,7 +125,7 @@
       </div>
       <div class="tb-center">
         <button class="tb-btn tb-start reveal" id="startBtn" data-action="start" aria-label="Start">
-          <span class="win-logo"><i></i><i></i><i></i><i></i></span>
+          <span class="win-logo" data-logo></span>
         </button>
         <button class="tb-btn reveal" data-action="search" aria-label="Search"><span data-icon="search"></span></button>
         <div class="tb-apps" id="tbApps"></div>
