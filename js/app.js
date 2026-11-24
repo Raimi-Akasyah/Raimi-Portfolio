@@ -38,6 +38,7 @@
     about: { title: 'About Me', icon: 'user', color: '#F7CBCA', w: 760, h: 580, render: renderAbout },
     skills: { title: 'Skills', icon: 'sparkles', color: '#B0D7D8', w: 860, h: 600, render: renderSkills },
     experience: { title: 'Experience', icon: 'briefcase', color: '#D5E5E5', w: 800, h: 620, render: renderExperience },
+    trainings: { title: 'Trainings & Events', icon: 'presentation', color: '#F7CBCA', w: 1000, h: 660, render: renderTrainings, flush: true },
     projects: { title: 'Projects', icon: 'folder', color: '#F7CBCA', w: 980, h: 620, render: renderProjects, flush: true },
     education: { title: 'Education', icon: 'cap', color: '#DDD3D3', w: 640, h: 440, render: renderEducation },
     certs: { title: 'Certificates', icon: 'award', color: '#B0D7D8', w: 640, h: 460, render: renderCerts },
@@ -45,8 +46,10 @@
     resume: { title: 'Resume.pdf', icon: 'file', color: '#F1F7F7', w: 780, h: 680, render: renderResume, flush: true },
     terminal: { title: 'Terminal', icon: 'terminal', color: '#5D6B6B', glyph: '#F7CBCA', w: 720, h: 460, render: renderTerminal, flush: true, dark: true },
   };
-  const DESKTOP_ORDER = ['about', 'skills', 'experience', 'projects', 'education', 'certs', 'contact', 'resume', 'terminal'];
-  const PINNED = ['about', 'projects', 'experience', 'skills', 'terminal', 'contact'];
+  const DESKTOP_ORDER = ['about', 'skills', 'experience', 'trainings', 'projects', 'education', 'certs', 'contact', 'resume', 'terminal'];
+  const PINNED = ['about', 'projects', 'experience', 'trainings', 'skills', 'terminal', 'contact'];
+  const fmtDate = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  const GALLERY_TYPES = { all: 'All photos', community: 'Community training', public: 'Public sector', events: 'Events & booths' };
 
   /* =========================================================
      Static text fill
@@ -88,7 +91,7 @@
     const rec = [
       { open: 'resume', t: 'Resume.pdf', s: 'Updated November 2026', app: APPS.resume },
       { project: 'msme-ai', t: 'MSME AI Chatbot', s: 'Projects › Work', app: APPS.projects },
-      { project: 'amazon-quick', t: 'Amazon Quick Solutions', s: 'Projects › Work', app: APPS.projects },
+      { open: 'trainings', t: 'Trainings & Events', s: `${TRAININGS.length} sessions · ${GALLERY.length} photos`, app: APPS.trainings },
       { open: 'contact', t: 'Get in touch', s: 'Contact', app: APPS.contact },
     ];
     $('#smRec').innerHTML = rec
@@ -565,6 +568,8 @@
       let i = 0;
       if (apps.length) html += `<div class="sm-group">Apps</div>` + apps.map((id) => `<button class="sm-rec-item" style="--i:${i++}" data-open="${id}">${tile(APPS[id], 'md')}<span><b>${esc(APPS[id].title)}</b><small>App</small></span></button>`).join('');
       if (projects.length) html += `<div class="sm-group">Projects</div>` + projects.map((p) => `<button class="sm-rec-item" style="--i:${i++}" data-project="${p.id}">${tile({ ...APPS.projects, color: p.color }, 'md')}<span><b>${esc(p.name)}</b><small>${esc(p.type === 'work' ? 'Work project' : 'Academic project')}</small></span></button>`).join('');
+      const trs = TRAININGS.filter((t) => (t.programme + ' ' + t.venue + ' ' + t.place + ' trainer training nadi').toLowerCase().includes(q));
+      if (trs.length) html += `<div class="sm-group">Trainings</div>` + trs.map((t) => `<button class="sm-rec-item" style="--i:${i++}" data-open="trainings">${tile(APPS.trainings, 'md')}<span><b>${esc(t.venue)}</b><small>${esc(t.programme)} · ${esc(fmtDate(t.date))}</small></span></button>`).join('');
       if (skills.length) html += `<div class="sm-group">Skills</div>` + skills.slice(0, 8).map((k) => `<button class="sm-rec-item" style="--i:${i++}" data-open="skills">${tile(APPS.skills, 'md')}<span><b>${esc(k.s)}</b><small>${esc(k.g)}</small></span></button>`).join('');
       res.innerHTML = html || `<div class="sm-none">No results for “${esc(q)}”</div>`;
     },
@@ -761,6 +766,169 @@
     draw();
   }
 
+  function renderTrainings(b, w) {
+    let tab = 'sessions', filter = 'all';
+    b.innerHTML = `
+      <div class="tr">
+        <div class="tr-tabs" role="tablist">
+          <button role="tab" data-tab="sessions">${icon('presentation')}Training sessions</button>
+          <button role="tab" data-tab="gallery">${icon('camera')}Photo gallery <em>${GALLERY.length}</em></button>
+          <span class="tr-ink"></span>
+        </div>
+        <div class="tr-body"></div>
+      </div>`;
+    const bodyEl = $('.tr-body', b);
+
+    const sessions = () => `
+      <div class="pad">
+        <span class="eyebrow">Trainer</span>
+        <h2 class="h-sec">AI training I've delivered</h2>
+        <div class="tr-stats">${TRAINING_STATS.map((s, i) => `<div class="card tr-stat" style="animation:fade-up .6s ${i * 80 + 100}ms var(--out) both"><b data-count="${esc(s.n)}">0</b><span>${esc(s.label)}</span></div>`).join('')}</div>
+        <div class="tr-list">
+          ${TRAININGS.map((t, i) => {
+            const d = new Date(t.date + 'T00:00:00');
+            return `
+            <article class="card tr-item" style="animation:fade-up .6s ${i * 70 + 250}ms var(--out) both">
+              <div class="tr-date"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-GB', { month: 'short' })}</span><small>${d.getFullYear()}</small></div>
+              <div class="tr-info">
+                <span class="chip${t.programme.startsWith('Kampung') ? ' pink' : ''}">${esc(t.programme)}</span>
+                <h3>${esc(t.venue)}</h3>
+                <p>${icon('pin')}${esc(t.place)}${t.online ? ` <span class="tr-online">${icon('video')}Online</span>` : ''}</p>
+              </div>
+              <span class="tr-role">${icon('star')}Trainer</span>
+            </article>`;
+          }).join('')}
+        </div>
+        <div class="card tr-public" style="animation:fade-up .6s 750ms var(--out) both">
+          ${tile({ color: '#B0D7D8', icon: 'landmark' }, 'md')}
+          <div><h3>Public sector training</h3><p>${esc(PUBLIC_SECTOR_NOTE)}</p>
+          <button class="btn btn-line" data-gal="public">${icon('camera')}See public sector photos</button></div>
+        </div>
+      </div>`;
+
+    const gallery = () => {
+      const items = GALLERY.filter((g) => filter === 'all' || g.type === filter);
+      return `
+        <div class="gal-bar">
+          ${Object.keys(GALLERY_TYPES).map((k) => `<button class="gal-f${k === filter ? ' active' : ''}" data-gal="${k}">${GALLERY_TYPES[k]}<em>${k === 'all' ? GALLERY.length : GALLERY.filter((g) => g.type === k).length}</em></button>`).join('')}
+        </div>
+        ${filter === 'public' ? `<p class="gal-note">${icon('landmark')}${esc(PUBLIC_SECTOR_NOTE)}</p>` : ''}
+        <div class="gal-grid">
+          ${items.map((g, i) => `
+            <button class="gal-item" data-photo="${esc(g.file)}" style="--i:${i}" aria-label="${esc(g.caption)}">
+              <img src="assets/events/thumbs/${esc(g.file)}.jpg" alt="${esc(g.caption)}" loading="lazy" decoding="async">
+              <span class="gal-cap">${esc(g.caption)}</span>
+            </button>`).join('')}
+        </div>`;
+    };
+
+    const draw = () => {
+      $$('.tr-tabs [data-tab]', b).forEach((t) => { const on = t.dataset.tab === tab; t.classList.toggle('active', on); t.setAttribute('aria-selected', on); });
+      const act = $(`.tr-tabs [data-tab="${tab}"]`, b);
+      const ink = $('.tr-ink', b);
+      ink.style.left = act.offsetLeft + 'px';
+      ink.style.width = act.offsetWidth + 'px';
+      bodyEl.innerHTML = tab === 'sessions' ? sessions() : gallery();
+      bodyEl.scrollTop = 0;
+      if (tab === 'sessions') countUp(bodyEl);
+    };
+
+    b.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-tab]');
+      if (t) { tab = t.dataset.tab; draw(); return; }
+      const f = e.target.closest('[data-gal]');
+      if (f) { tab = 'gallery'; filter = f.dataset.gal; draw(); return; }
+      const ph = e.target.closest('[data-photo]');
+      if (ph) {
+        const list = GALLERY.filter((g) => filter === 'all' || g.type === filter);
+        Lightbox.open(list, list.findIndex((g) => g.file === ph.dataset.photo), $('img', ph));
+      }
+    });
+    w.api.show = (t, f) => { tab = t || 'sessions'; filter = f || 'all'; draw(); };
+    requestAnimationFrame(draw);
+  }
+
+  function countUp(root) {
+    $$('[data-count]', root).forEach((el) => {
+      const end = parseInt(el.dataset.count, 10);
+      if (reduceMotion || !end) { el.textContent = el.dataset.count; return; }
+      const t0 = performance.now(), dur = 1100;
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / dur);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  /* ---------- Photo viewer ---------- */
+  const Lightbox = {
+    list: [], i: 0, el: null,
+    build() {
+      const el = document.createElement('div');
+      el.className = 'lightbox';
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-label', 'Photo viewer');
+      el.innerHTML = `
+        <button class="lb-btn lb-x" aria-label="Close">${icon('x')}</button>
+        <button class="lb-btn lb-prev" aria-label="Previous photo">${icon('chevronL')}</button>
+        <figure class="lb-fig"><img alt=""><figcaption><span class="lb-cap"></span><small class="lb-n"></small></figcaption></figure>
+        <button class="lb-btn lb-next" aria-label="Next photo">${icon('chevronR')}</button>
+        <div class="lb-strip"></div>`;
+      document.body.appendChild(el);
+      el.addEventListener('click', (e) => {
+        if (e.target === el || e.target.closest('.lb-x')) this.close();
+        else if (e.target.closest('.lb-prev')) this.go(-1);
+        else if (e.target.closest('.lb-next')) this.go(1);
+        else { const s = e.target.closest('[data-lb]'); if (s) this.show(+s.dataset.lb); }
+      });
+      let sx = null;
+      el.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+      el.addEventListener('touchend', (e) => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) this.go(dx < 0 ? 1 : -1); sx = null; });
+      this.el = el;
+    },
+    open(list, i, fromImg) {
+      if (!this.el) this.build();
+      this.list = list;
+      $('.lb-strip', this.el).innerHTML = list.map((g, k) => `<button data-lb="${k}" aria-label="Photo ${k + 1}"><img src="assets/events/thumbs/${esc(g.file)}.jpg" alt="" loading="lazy"></button>`).join('');
+      this.el.classList.add('open');
+      this.show(Math.max(0, i), fromImg);
+    },
+    show(i, fromImg) {
+      const n = this.list.length;
+      const dir = i > this.i ? 1 : -1;
+      this.i = (i + n) % n;
+      const g = this.list[this.i];
+      const img = $('.lb-fig img', this.el);
+      img.src = `assets/events/${g.file}.jpg`;
+      img.alt = g.caption;
+      $('.lb-cap', this.el).textContent = g.caption;
+      $('.lb-n', this.el).textContent = `${this.i + 1} / ${n}`;
+      $$('[data-lb]', this.el).forEach((s) => s.classList.toggle('active', +s.dataset.lb === this.i));
+      $(`[data-lb="${this.i}"]`, this.el)?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (fromImg) {
+        const r = fromImg.getBoundingClientRect();
+        img.onload = () => {
+          img.onload = null;
+          const t = img.getBoundingClientRect();
+          anim(img, [
+            { transform: `translate(${r.left + r.width / 2 - (t.left + t.width / 2)}px, ${r.top + r.height / 2 - (t.top + t.height / 2)}px) scale(${r.width / t.width})`, opacity: .6 },
+            { transform: 'none', opacity: 1 },
+          ], { duration: 480, easing: 'cubic-bezier(.16,1,.3,1)' });
+        };
+      } else {
+        anim(img, [{ opacity: 0, transform: `translateX(${dir * 40}px)` }, { opacity: 1, transform: 'none' }], { duration: 360, easing: 'cubic-bezier(.16,1,.3,1)' });
+      }
+    },
+    go(d) { this.show(this.i + d); },
+    close() {
+      if (!this.el || !this.el.classList.contains('open')) return;
+      this.el.classList.remove('open');
+    },
+    isOpen() { return !!this.el && this.el.classList.contains('open'); },
+  };
+
   function renderEducation(b) {
     b.innerHTML = `
       <div class="pad">
@@ -903,7 +1071,7 @@
         print('<span class="t-head">Available commands</span>');
         [
           ['whoami', 'Who is Raimi?'], ['about', 'Professional profile'], ['skills', 'Skills by category'],
-          ['experience', 'Work history'], ['projects', 'List projects'], ['project <n>', 'Open a project'],
+          ['experience', 'Work history'], ['trainings', 'Trainings I have delivered'], ['projects', 'List projects'], ['project <n>', 'Open a project'],
           ['education', 'Studies'], ['certs', 'Certifications'], ['contact', 'How to reach me'],
           ['open <app>', 'Open a window (about, skills, projects…)'], ['scene <1-4>', 'Change wallpaper'],
           ['neofetch', 'System info'], ['simple', 'Open the simple view'], ['date', 'Current date & time'],
@@ -922,6 +1090,12 @@
         openProject(p.id);
       },
       education: () => EDUCATION.forEach((e) => print(`<span class="t-head">${esc(e.degree)}</span>\n  <span class="t-dim">${esc(e.school)}, ${esc(e.place)} · ${esc(e.period)}</span>`)),
+      trainings: () => {
+        print('<span class="t-head">Trainings delivered as trainer</span>');
+        TRAININGS.forEach((t) => print(`  <span class="t-pink">${esc(fmtDate(t.date).padEnd(18))}</span>${esc(t.programme)} <span class="t-dim">— ${esc(t.venue)}, ${esc(t.place)}${t.online ? ' (online)' : ''}</span>`));
+        line(PUBLIC_SECTOR_NOTE, 't-dim');
+        line("Type 'open trainings' to see the photo gallery.", 't-dim');
+      },
       certs: () => CERTS.forEach((c) => print(`  <span class="t-pink">★</span> ${esc(c.name)} <span class="t-dim">— ${esc(c.issuer)}, ${esc(c.date)}</span>`)),
       contact: () => {
         print(`  <span class="t-teal">email </span> <a class="t-link" href="mailto:${esc(PROFILE.email)}">${esc(PROFILE.email)}</a>`);
@@ -1026,7 +1200,7 @@
       $('#simple').innerHTML = `
         <nav class="s-nav">
           <span class="s-logo">${logo()}<span>${esc(p.name)}</span></span>
-          <div class="s-links"><a href="#s-about">About</a><a href="#s-skills">Skills</a><a href="#s-exp">Experience</a><a href="#s-proj">Projects</a><a href="#s-edu">Education</a><a href="#s-contact">Contact</a></div>
+          <div class="s-links"><a href="#s-about">About</a><a href="#s-skills">Skills</a><a href="#s-exp">Experience</a><a href="#s-train">Trainings</a><a href="#s-proj">Projects</a><a href="#s-edu">Education</a><a href="#s-contact">Contact</a></div>
           <button class="btn btn-dark" data-action="desktop">${icon('square')}Desktop view</button>
         </nav>
         <header class="s-hero">
@@ -1039,12 +1213,21 @@
         <section class="s-sec rv" id="s-about"><h2>About me</h2><p class="lead">${esc(p.summary)}</p><p class="lead">${esc(p.strengths)}</p></section>
         <div class="s-alt"><section class="s-sec rv" id="s-skills"><h2>Skills</h2><div class="skills-grid">${SKILLS.map((g, i) => `<div class="card skill-card"><header>${tile({ color: ['#B0D7D8', '#F7CBCA', '#F1F7F7', '#DDD3D3'][i % 4], icon: g.icon }, 'md')}<h3>${esc(g.group)}</h3></header><div class="chips">${g.items.map((s) => `<span class="chip">${esc(s)}</span>`).join('')}</div></div>`).join('')}</div></section></div>
         <section class="s-sec rv" id="s-exp"><h2>Experience</h2><div class="timeline">${EXPERIENCE.map((e) => `<article class="card tl-item${e.current ? ' current' : ''}"><div class="tl-top"><div><h3>${esc(e.role)}${e.current ? '<span class="tag-now">Current</span>' : ''}</h3><div class="tl-company">${esc(e.company)}</div></div><span class="tl-period">${icon('calendar')}${esc(e.period)}</span></div><ul>${e.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${e.groups.map((g) => `<div class="tl-group"><h4>${icon('sparkles')}${esc(g.title)}</h4><ul>${g.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</article>`).join('')}</div></section>
-        <div class="s-alt"><section class="s-sec rv" id="s-proj"><h2>Projects</h2><div class="s-proj-grid">${PROJECTS.map((x) => `<article class="card s-proj">${x.link ? `<a class="ex-shot" href="${esc(x.link)}" target="_blank" rel="noopener" aria-label="Visit ${esc(x.linkLabel)}">${thumb(x)}<span class="ex-shot-cta">${icon('external')}Visit site</span></a>` : thumb(x)}<span class="eyebrow">${x.type === 'work' ? 'Work' : 'Academic'}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p><div class="chips">${x.tags.map((t) => `<span class="chip pink">${esc(t)}</span>`).join('')}</div></article>`).join('')}</div></section></div>
-        <section class="s-sec rv" id="s-edu"><h2>Education & certifications</h2><div class="edu-list">${EDUCATION.map((e) => `<div class="card edu-card">${tile({ color: '#F7CBCA', icon: 'cap' }, 'md')}<div><h3>${esc(e.degree)}</h3><p>${esc(e.school)} · ${esc(e.place)} · ${esc(e.period)}</p></div></div>`).join('')}${CERTS.map((c) => `<div class="card cert-card">${tile({ color: '#B0D7D8', icon: 'award' }, 'md')}<div><h3>${esc(c.name)}</h3><p>${esc(c.issuer)} · ${esc(c.date)}</p></div></div>`).join('')}</div></section>
-        <div class="s-alt"><section class="s-sec rv" id="s-contact"><h2>Contact</h2><div class="contact-side" style="max-width:520px"><a class="card c-row" href="mailto:${esc(p.email)}">${tile(APPS.contact, 'md')}<div><small>Email</small><b>${esc(p.email)}</b></div></a><a class="card c-row" href="${esc(p.github)}" target="_blank" rel="noopener">${tile({ color: '#D5E5E5', icon: 'github' }, 'md')}<div><small>GitHub</small><b>${esc(p.githubLabel)}</b></div>${icon('external')}</a><div class="card c-row">${tile({ color: '#DDD3D3', icon: 'pin' }, 'md')}<div><small>Location</small><b>${esc(p.location)}</b></div></div></div></section></div>
+        <div class="s-alt"><section class="s-sec rv" id="s-train"><h2>Trainings & events</h2>
+          <div class="tr-list">${TRAININGS.map((t) => { const d = new Date(t.date + 'T00:00:00'); return `<article class="card tr-item"><div class="tr-date"><b>${d.getDate()}</b><span>${d.toLocaleDateString('en-GB', { month: 'short' })}</span><small>${d.getFullYear()}</small></div><div class="tr-info"><span class="chip${t.programme.startsWith('Kampung') ? ' pink' : ''}">${esc(t.programme)}</span><h3>${esc(t.venue)}</h3><p>${icon('pin')}${esc(t.place)}${t.online ? ` <span class="tr-online">${icon('video')}Online</span>` : ''}</p></div><span class="tr-role">${icon('star')}Trainer</span></article>`; }).join('')}</div>
+          <p class="lead" style="margin-top:22px">${esc(PUBLIC_SECTOR_NOTE)}</p>
+          <div class="gal-grid s-gal">${GALLERY.map((g) => `<button class="gal-item" data-sphoto="${esc(g.file)}" aria-label="${esc(g.caption)}"><img src="assets/events/thumbs/${esc(g.file)}.jpg" alt="${esc(g.caption)}" loading="lazy" decoding="async"><span class="gal-cap">${esc(g.caption)}</span></button>`).join('')}</div>
+        </section></div>
+        <section class="s-sec rv" id="s-proj"><h2>Projects</h2><div class="s-proj-grid">${PROJECTS.map((x) => `<article class="card s-proj">${x.link ? `<a class="ex-shot" href="${esc(x.link)}" target="_blank" rel="noopener" aria-label="Visit ${esc(x.linkLabel)}">${thumb(x)}<span class="ex-shot-cta">${icon('external')}Visit site</span></a>` : thumb(x)}<span class="eyebrow">${x.type === 'work' ? 'Work' : 'Academic'}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p><div class="chips">${x.tags.map((t) => `<span class="chip pink">${esc(t)}</span>`).join('')}</div></article>`).join('')}</div></section>
+        <div class="s-alt"><section class="s-sec rv" id="s-edu"><h2>Education & certifications</h2><div class="edu-list">${EDUCATION.map((e) => `<div class="card edu-card">${tile({ color: '#F7CBCA', icon: 'cap' }, 'md')}<div><h3>${esc(e.degree)}</h3><p>${esc(e.school)} · ${esc(e.place)} · ${esc(e.period)}</p></div></div>`).join('')}${CERTS.map((c) => `<div class="card cert-card">${tile({ color: '#B0D7D8', icon: 'award' }, 'md')}<div><h3>${esc(c.name)}</h3><p>${esc(c.issuer)} · ${esc(c.date)}</p></div></div>`).join('')}</div></section></div>
+        <section class="s-sec rv" id="s-contact"><h2>Contact</h2><div class="contact-side" style="max-width:520px"><a class="card c-row" href="mailto:${esc(p.email)}">${tile(APPS.contact, 'md')}<div><small>Email</small><b>${esc(p.email)}</b></div></a><a class="card c-row" href="${esc(p.github)}" target="_blank" rel="noopener">${tile({ color: '#D5E5E5', icon: 'github' }, 'md')}<div><small>GitHub</small><b>${esc(p.githubLabel)}</b></div>${icon('external')}</a><div class="card c-row">${tile({ color: '#DDD3D3', icon: 'pin' }, 'md')}<div><small>Location</small><b>${esc(p.location)}</b></div></div></div></section>
         <footer class="s-foot">© ${new Date().getFullYear()} ${esc(p.fullName)}</footer>`;
       const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { root: $('#simple'), threshold: 0.12 });
       $$('#simple .rv').forEach((el) => io.observe(el));
+      $('#simple').addEventListener('click', (e) => {
+        const ph = e.target.closest('[data-sphoto]');
+        if (ph) Lightbox.open(GALLERY, GALLERY.findIndex((g) => g.file === ph.dataset.sphoto), $('img', ph));
+      });
       $$('#simple a[href^="#s-"]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); $(a.getAttribute('href')).scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }); }));
       this.built = true;
     },
@@ -1188,6 +1371,13 @@
 
     // Keyboard
     document.addEventListener('keydown', (e) => {
+      if (Lightbox.isOpen()) {
+        if (e.key === 'Escape') Lightbox.close();
+        else if (e.key === 'ArrowLeft') Lightbox.go(-1);
+        else if (e.key === 'ArrowRight') Lightbox.go(1);
+        e.preventDefault();
+        return;
+      }
       if (Shell.phase === 'lock' && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); Shell.toLogin(); return; }
       if (Shell.phase === 'login' && e.key === 'Enter' && document.activeElement?.tagName !== 'BUTTON') { Shell.signIn(); return; }
       if (e.key === 'Escape') {

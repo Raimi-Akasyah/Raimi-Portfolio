@@ -25,7 +25,7 @@ const PROFILE = {
 };
 
 const STATS = [
-  '2 roles at Pepper Labs',
+  '6 AI trainings delivered',
   '8 projects shipped',
   'AWS & Generative AI',
   'Bachelor of IT, UiTM',
@@ -239,6 +239,49 @@ const PROJECTS = [
   },
 ];
 
+/* Sessions where Raimi was the trainer */
+const TRAININGS = [
+  { programme: 'AI For Community @ NADI', date: '2026-08-01', venue: 'NADI Mulia Jaya', place: 'Selangor' },
+  { programme: 'AI For Community @ NADI', date: '2026-08-01', venue: 'NADI Taman Ahmad Razali', place: 'Ampang, Selangor' },
+  { programme: 'AI For Community @ NADI', date: '2026-08-15', venue: 'NADI Linggi', place: 'Negeri Sembilan' },
+  { programme: 'AI For Community @ NADI', date: '2026-09-20', venue: 'NADI Bukit Selambau, NADI Lembah Bujang & NADI Kota Kuala Muda', place: 'Kedah', online: true },
+  { programme: 'AI For Community @ NADI', date: '2026-09-20', venue: 'NADI Desa Tun Razak', place: 'Kuala Lumpur' },
+  { programme: 'Kampung Angkat MADANI', date: '2026-10-23', venue: 'SK St. Edmund', place: 'Limbang, Sarawak' },
+];
+
+const TRAINING_STATS = [
+  { n: '6', label: 'sessions as trainer' },
+  { n: '8', label: 'venues' },
+  { n: '5', label: 'states & territories' },
+];
+
+const PUBLIC_SECTOR_NOTE =
+  'For public sector agencies, we build an AI solution around the agency’s own use case, present it to their team, and then train staff hands-on so they can use it themselves.';
+
+/* type: community | public | events */
+const GALLERY = [
+  { file: 'nadi-training-1', type: 'community', caption: 'Leading an AI For Community @ NADI session at a NADI digital transformation centre' },
+  { file: 'nadi-training-3', type: 'community', caption: 'One-to-one help during an AI For Community @ NADI session' },
+  { file: 'nadi-training-4', type: 'community', caption: 'Explaining AI tools to community participants at NADI' },
+  { file: 'nadi-training-2', type: 'community', caption: 'Guiding participants through hands-on exercises at NADI' },
+  { file: 'nadi-training-5', type: 'community', caption: 'Starting a NADI session with a pre-assessment' },
+  { file: 'kampung-angkat-limbang-2', type: 'community', caption: 'Kampung Angkat MADANI at SK St. Edmund, Limbang: “AI or real?” activity' },
+  { file: 'kampung-angkat-limbang-1', type: 'community', caption: 'Kampung Angkat MADANI at SK St. Edmund, Limbang, Sarawak' },
+  { file: 'public-sector-amazon-quick', type: 'public', caption: 'Presenting an Amazon Quick flow built around an agency’s daily economic briefing' },
+  { file: 'public-sector-ai-pintar', type: 'public', caption: 'Presenting an AI assistant solution to a ministry team' },
+  { file: 'public-sector-training-2', type: 'public', caption: 'Walking a public sector team through the solution we built for them' },
+  { file: 'public-sector-training-1', type: 'public', caption: 'Hands-on AI training for public sector officers' },
+  { file: 'public-sector-training-4', type: 'public', caption: 'Supporting officers one-to-one during a public sector training' },
+  { file: 'public-sector-training-3', type: 'public', caption: 'Answering questions during a public sector AI training' },
+  { file: 'nadi-expo-booth', type: 'events', caption: 'Demonstrating AI at the AI For Community @ NADI booth' },
+  { file: 'expo-booth-demo', type: 'events', caption: 'Showing a visitor an AI demo at the Pepper Labs booth' },
+  { file: 'expo-booth-1', type: 'events', caption: 'Running demos at the AI For Community @ NADI exhibition booth' },
+  { file: 'kiro-quick-fiesta', type: 'events', caption: 'Kiro and Amazon Quick Fiesta Malaysia (AWS)' },
+  { file: 'aws-event-networking', type: 'events', caption: 'Talking AI solutions at an AWS event' },
+  { file: 'kiro-leveling-workshop', type: 'events', caption: 'Kiro Leveling with AWS Kiro workshop (Pepper Labs × AWS)' },
+  { file: 'hands-on-session', type: 'events', caption: 'Hands-on build session with participants' },
+];
+
 const EDUCATION = [
   {
     degree: 'Bachelor of Information Technology (Hons.)',
@@ -314,4 +357,10 @@ const ICONS = {
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   arrowR: '<path d="M5 12h14M12 5l7 7-7 7"/>',
   calendar: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  presentation: '<path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  landmark: '<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/>',
+  star: '<path d="M11.5 2.3a.5.5 0 0 1 1 0l2.3 4.7a2 2 0 0 0 1.5 1.1l5.2.8a.5.5 0 0 1 .3.9l-3.8 3.6a2 2 0 0 0-.6 1.8l.9 5.2a.5.5 0 0 1-.8.5l-4.6-2.4a2 2 0 0 0-1.9 0l-4.6 2.4a.5.5 0 0 1-.8-.5l.9-5.2a2 2 0 0 0-.6-1.8L1.3 9.8a.5.5 0 0 1 .3-.9l5.2-.8a2 2 0 0 0 1.5-1.1z"/>',
+  video: '<path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
 };
