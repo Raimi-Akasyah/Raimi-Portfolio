@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raimi Akasyah — Junior Solution Architect</title>
+  <meta name="description" content="Portfolio of Raimi Akasyah, Junior Solution Architect working on AI solutions, AWS, web development and UI/UX." />
+  <meta name="theme-color" content="#5D6B6B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="phase-boot">
+
+  <!-- ============ Wallpaper: video scenes + train overlay ============ -->
+  <section id="stage" class="stage" aria-hidden="true">
+    <div class="scenes" id="scenes"></div>
+    <div class="overlay-wrap" id="overlayWrap">
+      <img class="overlay" id="overlayImg" alt="" draggable="false" />
+    </div>
+    <div class="vignette"></div>
+  </section>
+
+  <!-- ============ Boot screen ============ -->
+  <div id="boot" class="boot" role="status" aria-label="Loading portfolio">
+    <div class="boot-logo">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="boot-name">RaimiOS</div>
+    <div class="spinner" aria-hidden="true">
+      <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i>
+    </div>
+  </div>
+
+  <!-- ============ Lock / sign-in screen ============ -->
+  <div id="lock" class="lock" tabindex="-1">
+    <div class="lock-clock">
+      <div class="lock-time" id="lockTime">--:--</div>
+      <div class="lock-date" id="lockDate"></div>
+    </div>
+    <div class="lock-hint"><span class="lock-hint-ico" data-icon="lock"></span>Click or press any key to unlock</div>
+
+    <div class="lock-login" id="lockLogin">
+      <div class="avatar-ring big"><div class="avatar xl" data-avatar></div></div>
+      <h2 class="lock-name" data-text="name"></h2>
+      <p class="lock-role" data-text="title"></p>
+      <button class="lock-enter liquid-glass" id="enterBtn">
+        <span>Enter portfolio</span><span data-icon="arrowR"></span>
+      </button>
+      <button class="lock-alt" data-action="simple">or open the simple view</button>
+      <div class="lock-welcome" id="lockWelcome">
+        <div class="spinner small" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i></div>
+        <span>Welcome</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Desktop ============ -->
+  <main id="desktop" class="desktop" aria-label="Portfolio desktop">
+
+    <div class="hero" id="hero">
+      <span class="hero-badge liquid-glass"><i class="pulse-dot"></i><span data-text="status"></span></span>
+      <h1 class="hero-title" id="heroTitle"></h1>
+      <p class="hero-roles" id="heroRoles"></p>
+      <p class="hero-sub" data-text="tagline"></p>
+      <div class="hero-cta liquid-glass">
+        <button class="btn-white" data-open="about">Explore my work</button>
+        <button class="btn-ghost" data-action="simple">Simple view</button>
+      </div>
+      <div class="hero-scenes" id="heroScenes" role="group" aria-label="Change wallpaper"></div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="icons" id="icons" role="list" aria-label="Desktop"></div>
+
+    <div class="windows" id="windows">
+      <div class="snap-preview" id="snapPreview"></div>
+    </div>
+
+    <!-- Start menu -->
+    <div class="flyout start-menu" id="startMenu" aria-label="Start menu">
+      <label class="sm-search">
+        <span data-icon="search"></span>
+        <input id="smSearch" type="text" placeholder="Search apps, skills and projects" autocomplete="off" aria-label="Search" />
+      </label>
+      <div class="sm-body" id="smBody">
+        <div class="sm-head"><span>Pinned</span></div>
+        <div class="sm-grid" id="smGrid"></div>
+        <div class="sm-head"><span>Recommended</span></div>
+        <div class="sm-rec" id="smRec"></div>
+      </div>
+      <div class="sm-results" id="smResults" hidden></div>
+      <footer class="sm-foot">
+        <div class="sm-user">
+          <div class="avatar sm" data-avatar></div>
+          <div><b data-text="name"></b><small data-text="title"></small></div>
+        </div>
+        <button class="sm-power" data-action="lock" aria-label="Lock" title="Lock"><span data-icon="power"></span></button>
+      </footer>
+    </div>
+
+    <!-- Wallpaper flyout -->
+    <div class="flyout scene-flyout" id="sceneFlyout" aria-label="Wallpaper">
+      <div class="sf-title">Wallpaper</div>
+      <div class="sf-grid" id="sfGrid"></div>
+    </div>
+
+    <!-- Calendar flyout -->
+    <div class="flyout cal-flyout" id="calFlyout" aria-label="Calendar">
+      <div class="cal-now" id="calNow"></div>
+      <div class="cal" id="cal"></div>
+    </div>
+
+    <div class="context-menu" id="contextMenu" role="menu"></div>
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <!-- Taskbar -->
+    <nav class="taskbar" id="taskbar" aria-label="Taskbar">
+      <div class="tb-left">
+        <button class="tb-weather reveal" data-action="scenes" title="Change wallpaper">
+          <span data-icon="image"></span>
+          <span class="tb-weather-text"><b id="tbScene">Golden Hour</b><small>Wallpaper</small></span>
+        </button>
+      </div>
+      <div class="tb-center">
+        <button class="tb-btn tb-start reveal" id="startBtn" data-action="start" aria-label="Start">
+          <span class="win-logo"><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="tb-btn reveal" data-action="search" aria-label="Search"><span data-icon="search"></span></button>
+        <div class="tb-apps" id="tbApps"></div>
+      </div>
+      <div class="tb-right">
+        <button class="tb-btn tb-simple reveal" data-action="simple" title="Simple view" aria-label="Simple view"><span data-icon="list"></span></button>
+        <div class="tb-tray reveal" aria-hidden="true"><span data-icon="wifi"></span><span data-icon="volume"></span><span data-icon="battery"></span></div>
+        <button class="tb-clock reveal" data-action="calendar" aria-label="Date and time">
+          <span id="tbTime">--:--</span><small id="tbDate"></small>
+        </button>
+      </div>
+    </nav>
+  </main>
+
+  <!-- ============ Simple (scrolling) view ============ -->
+  <div id="simple" class="simple" hidden></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
