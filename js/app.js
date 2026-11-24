@@ -16,6 +16,12 @@
     `<svg class="ico ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
   const tile = (app, size = '') =>
     `<span class="tile ${size}" style="--c:${app.color};${app.glyph ? `--g:${app.glyph}` : ''}">${icon(app.icon)}</span>`;
+  const thumb = (p, tag = 'div') =>
+    `<${tag} class="ex-thumb${p.image ? ' has-img' : ''}" style="--c:${p.color}">${
+      p.image
+        ? `<img src="${esc(p.image)}" alt="Screenshot of ${esc(p.name)}" loading="lazy" decoding="async">`
+        : icon(p.type === 'work' ? 'layers' : 'code')
+    }${p.link ? '<span class="ex-live">Live</span>' : ''}</${tag}>`;
   let logoN = 0;
   const RA_R = 'M303 362H490C527 362 556 394 556 434C556 474 527 506 490 506H418L528 607H470L342 468H490C505 468 516 453 516 434C516 415 505 402 490 402H303Z';
   const RA_A = 'M592 368H604L733 607H686L600 448L528 580L502 555Z';
@@ -715,7 +721,7 @@
         grid.innerHTML = items.length
           ? items.map((p, i) => `
               <button class="ex-item${p.id === sel ? ' active' : ''}" data-id="${p.id}" role="listitem" style="--i:${i}">
-                <span class="ex-thumb" style="--c:${p.color}">${icon(p.type === 'work' ? 'layers' : 'code')}</span>
+                ${thumb(p, 'span')}
                 <h4>${esc(p.name)}</h4><small>${p.type} project</small>
               </button>`).join('')
           : `<div class="ex-empty">No projects match “${esc(q)}”.</div>`;
@@ -729,8 +735,9 @@
           <button class="ex-close" aria-label="Close details">${icon('x')}</button>
           <span class="eyebrow">${sp.type === 'work' ? 'Work project' : 'Academic project'}</span>
           <h3>${esc(sp.name)}</h3>
-          <div class="ex-thumb" style="--c:${sp.color}">${icon(sp.type === 'work' ? 'layers' : 'code')}</div>
+          ${sp.link ? `<a class="ex-shot" href="${esc(sp.link)}" target="_blank" rel="noopener" aria-label="Visit ${esc(sp.linkLabel)}">${thumb(sp)}<span class="ex-shot-cta">${icon('external')}Visit site</span></a>` : thumb(sp)}
           <p>${esc(sp.summary)}</p>
+          ${sp.link ? `<a class="btn btn-dark ex-visit" href="${esc(sp.link)}" target="_blank" rel="noopener">${icon('globe')}${esc(sp.linkLabel)}${icon('external')}</a>` : ''}
           <div class="chips">${sp.tags.map((t, i) => `<span class="chip${i % 2 ? ' pink' : ''}">${esc(t)}</span>`).join('')}</div>
           <ul>${sp.details.map((d, i) => `<li style="--i:${i}">${esc(d)}</li>`).join('')}</ul>`;
         detail.classList.add('open');
@@ -907,7 +914,7 @@
       about: () => { line(PROFILE.summary); line(PROFILE.strengths, 't-dim'); },
       skills: () => SKILLS.forEach((s) => print(`<span class="t-pink">${esc(pad(s.group, 24))}</span>${esc(s.items.join(', '))}`)),
       experience: () => EXPERIENCE.forEach((e) => { print(`<span class="t-head">${esc(e.role)}</span> <span class="t-dim">@ ${esc(e.company)} · ${esc(e.period)}</span>`); e.points.slice(0, 2).forEach((p) => line('  • ' + p)); }),
-      projects: () => { PROJECTS.forEach((p, i) => print(`  <span class="t-teal">[${i + 1}]</span> ${esc(p.name)} <span class="t-dim">(${p.type})</span>`)); line("Type 'project <n>' to open one.", 't-dim'); },
+      projects: () => { PROJECTS.forEach((p, i) => print(`  <span class="t-teal">[${i + 1}]</span> ${esc(p.name)} <span class="t-dim">(${p.type})</span>${p.link ? ` <a class="t-link" href="${esc(p.link)}" target="_blank" rel="noopener">${esc(p.linkLabel)}</a>` : ''}`)); line("Type 'project <n>' to open one.", 't-dim'); },
       project: (a) => {
         const p = PROJECTS[+a[0] - 1] || PROJECTS.find((x) => x.id === a[0]);
         if (!p) return line('Usage: project <number>. Type "projects" for the list.', 't-err');
@@ -1032,7 +1039,7 @@
         <section class="s-sec rv" id="s-about"><h2>About me</h2><p class="lead">${esc(p.summary)}</p><p class="lead">${esc(p.strengths)}</p></section>
         <div class="s-alt"><section class="s-sec rv" id="s-skills"><h2>Skills</h2><div class="skills-grid">${SKILLS.map((g, i) => `<div class="card skill-card"><header>${tile({ color: ['#B0D7D8', '#F7CBCA', '#F1F7F7', '#DDD3D3'][i % 4], icon: g.icon }, 'md')}<h3>${esc(g.group)}</h3></header><div class="chips">${g.items.map((s) => `<span class="chip">${esc(s)}</span>`).join('')}</div></div>`).join('')}</div></section></div>
         <section class="s-sec rv" id="s-exp"><h2>Experience</h2><div class="timeline">${EXPERIENCE.map((e) => `<article class="card tl-item${e.current ? ' current' : ''}"><div class="tl-top"><div><h3>${esc(e.role)}${e.current ? '<span class="tag-now">Current</span>' : ''}</h3><div class="tl-company">${esc(e.company)}</div></div><span class="tl-period">${icon('calendar')}${esc(e.period)}</span></div><ul>${e.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>${e.groups.map((g) => `<div class="tl-group"><h4>${icon('sparkles')}${esc(g.title)}</h4><ul>${g.points.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</article>`).join('')}</div></section>
-        <div class="s-alt"><section class="s-sec rv" id="s-proj"><h2>Projects</h2><div class="s-proj-grid">${PROJECTS.map((x) => `<article class="card s-proj"><div class="ex-thumb" style="--c:${x.color}">${icon(x.type === 'work' ? 'layers' : 'code')}</div><span class="eyebrow">${x.type === 'work' ? 'Work' : 'Academic'}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p><div class="chips">${x.tags.map((t) => `<span class="chip pink">${esc(t)}</span>`).join('')}</div></article>`).join('')}</div></section></div>
+        <div class="s-alt"><section class="s-sec rv" id="s-proj"><h2>Projects</h2><div class="s-proj-grid">${PROJECTS.map((x) => `<article class="card s-proj">${x.link ? `<a class="ex-shot" href="${esc(x.link)}" target="_blank" rel="noopener" aria-label="Visit ${esc(x.linkLabel)}">${thumb(x)}<span class="ex-shot-cta">${icon('external')}Visit site</span></a>` : thumb(x)}<span class="eyebrow">${x.type === 'work' ? 'Work' : 'Academic'}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p><div class="chips">${x.tags.map((t) => `<span class="chip pink">${esc(t)}</span>`).join('')}</div></article>`).join('')}</div></section></div>
         <section class="s-sec rv" id="s-edu"><h2>Education & certifications</h2><div class="edu-list">${EDUCATION.map((e) => `<div class="card edu-card">${tile({ color: '#F7CBCA', icon: 'cap' }, 'md')}<div><h3>${esc(e.degree)}</h3><p>${esc(e.school)} · ${esc(e.place)} · ${esc(e.period)}</p></div></div>`).join('')}${CERTS.map((c) => `<div class="card cert-card">${tile({ color: '#B0D7D8', icon: 'award' }, 'md')}<div><h3>${esc(c.name)}</h3><p>${esc(c.issuer)} · ${esc(c.date)}</p></div></div>`).join('')}</div></section>
         <div class="s-alt"><section class="s-sec rv" id="s-contact"><h2>Contact</h2><div class="contact-side" style="max-width:520px"><a class="card c-row" href="mailto:${esc(p.email)}">${tile(APPS.contact, 'md')}<div><small>Email</small><b>${esc(p.email)}</b></div></a><a class="card c-row" href="${esc(p.github)}" target="_blank" rel="noopener">${tile({ color: '#D5E5E5', icon: 'github' }, 'md')}<div><small>GitHub</small><b>${esc(p.githubLabel)}</b></div>${icon('external')}</a><div class="card c-row">${tile({ color: '#DDD3D3', icon: 'pin' }, 'md')}<div><small>Location</small><b>${esc(p.location)}</b></div></div></div></section></div>
         <footer class="s-foot">© ${new Date().getFullYear()} ${esc(p.fullName)}</footer>`;

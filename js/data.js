@@ -26,7 +26,7 @@ const PROFILE = {
 
 const STATS = [
   '2 roles at Pepper Labs',
-  '7 projects shipped',
+  '8 projects shipped',
   'AWS & Generative AI',
   'Bachelor of IT, UiTM',
 ];
@@ -123,8 +123,11 @@ const PROJECTS = [
     name: 'MSME AI Chatbot & RAG Pipeline',
     type: 'work',
     color: '#B0D7D8',
+    image: 'assets/projects/bisnes-ai.jpg',
+    link: 'https://bisnes.ai',
+    linkLabel: 'bisnes.ai',
     tags: ['RAG', 'LLM', 'Python', 'Document ingestion'],
-    summary: 'An AI chatbot workflow using retrieval-augmented generation over business documents.',
+    summary: 'An AI chatbot for Malaysian businesses using retrieval-augmented generation over business documents, now live as bisnes.ai.',
     details: [
       'Moved the chatbot from a fine-tuning approach to RAG.',
       'Handled PDF, XLSX, CSV and Word inputs with chunking and vector-processing logic.',
@@ -168,12 +171,31 @@ const PROJECTS = [
     name: 'AI Ready Malaysia & Project Web Interfaces',
     type: 'work',
     color: '#DDD3D3',
+    image: 'assets/projects/ai-ready-malaysia.jpg',
+    link: 'https://ai.pepperlabs.my',
+    linkLabel: 'ai.pepperlabs.my',
     tags: ['HTML', 'CSS', 'JavaScript', 'PHP', 'Plesk'],
-    summary: 'Responsive landing pages and websites for Pepper Labs projects.',
+    summary: 'Responsive landing pages and websites for Pepper Labs projects, led by the AI Ready Malaysia training platform.',
     details: [
       'Designed, built and deployed pages for AI Ready Malaysia, MSME AI, K-Youth FAQ and MyFutureJobs.',
       'Used HTML/CSS/JavaScript/PHP and deployed with Plesk.',
-      'Iterated designs based on project discussions and requirements.',
+      'Incorporated content references and iterated designs based on project discussions and requirements.',
+    ],
+  },
+  {
+    id: 'myfuturejobs',
+    name: 'MyFutureJobs AI Landing Page',
+    type: 'work',
+    color: '#F7CBCA',
+    image: 'assets/projects/myfuturejobs.jpg',
+    link: 'https://myfuturejobs.pepperlabs.my',
+    linkLabel: 'myfuturejobs.pepperlabs.my',
+    tags: ['HTML', 'CSS', 'JavaScript', 'PHP', 'Plesk'],
+    summary: 'A responsive landing page helping Malaysian jobseekers build AI skills through AI Ready Malaysia.',
+    details: [
+      'Developed and deployed the responsive landing page for MyFutureJobs AI.',
+      'Built with HTML/CSS/JavaScript/PHP and deployed with Plesk.',
+      'Iterated the design based on project discussions and requirements.',
     ],
   },
   {

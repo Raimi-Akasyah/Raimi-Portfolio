@@ -882,6 +882,57 @@ body.scene-dark .hero-title { text-shadow: 0 6px 40px rgba(255,255,255,.25); }
 .ex-item:hover .ex-thumb .ico { transform: scale(1.15) rotate(-6deg); }
 .ex-thumb::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%); transform: translateX(-100%); }
 .ex-item:hover .ex-thumb::after { transform: translateX(100%); transition: transform .8s var(--ease); }
+.ex-thumb.has-img { background: var(--c); box-shadow: inset 0 0 0 1px rgba(93,107,107,.15); }
+.ex-thumb.has-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 1.2s var(--out), object-position 2.4s var(--ease);
+}
+.ex-item:hover .ex-thumb.has-img img, .ex-shot:hover .ex-thumb.has-img img, .s-proj:hover .ex-thumb.has-img img { transform: scale(1.06); }
+.ex-live {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(62,74,74,.72);
+  backdrop-filter: blur(6px);
+}
+.ex-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #7be0a5; animation: pulse 2s infinite; }
+.ex-shot { display: block; position: relative; border-radius: 9px; text-decoration: none; }
+.ex-shot-cta {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 9px;
+  background: rgba(62,74,74,.45);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.ex-shot-cta .ico { width: 16px; height: 16px; }
+.ex-shot:hover .ex-shot-cta, .ex-shot:focus-visible .ex-shot-cta { opacity: 1; }
+.ex-detail .ex-shot { margin-bottom: 16px; }
+.ex-detail .ex-shot .ex-thumb { margin-bottom: 0; }
+.ex-visit { margin: 2px 0 14px; font-size: 13px; padding: 8px 14px; max-width: 100%; }
+.ex-visit .ico:last-child { width: 13px; height: 13px; opacity: .8; }
 .ex-item h4 { margin: 0; font-size: 13.5px; line-height: 1.35; }
 .ex-item small { color: var(--slate); font-size: 11.5px; text-transform: capitalize; }
 .ex-empty { grid-column: 1 / -1; text-align: center; color: var(--slate); padding: 40px 0; font-size: 14px; }
@@ -1388,7 +1439,7 @@ body.scene-dark .hero-title { text-shadow: 0 6px 40px rgba(255,255,255,.25); }
 .s-sec h2 { font-family: var(--serif); font-weight: 400; font-size: 40px; margin: 0 0 24px; }
 .s-proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 .s-proj { padding: 18px; }
-.s-proj .ex-thumb { margin-bottom: 14px; }
+.s-proj > .ex-thumb, .s-proj > .ex-shot { margin-bottom: 14px; }
 .s-proj h3 { margin: 0 0 6px; font-size: 16px; }
 .s-proj p { margin: 0 0 12px; font-size: 14px; line-height: 1.6; color: var(--slate); }
 .s-foot { text-align: center; padding: 30px; background: var(--slate); color: var(--mist); font-size: 13px; }
