@@ -39,6 +39,7 @@
     skills: { title: 'Skills', icon: 'sparkles', color: '#B0D7D8', w: 860, h: 600, render: renderSkills },
     experience: { title: 'Experience', icon: 'briefcase', color: '#D5E5E5', w: 800, h: 620, render: renderExperience },
     trainings: { title: 'Trainings & Events', icon: 'presentation', color: '#F7CBCA', w: 1000, h: 660, render: renderTrainings, flush: true },
+    photos: { title: 'Photography', icon: 'camera', color: '#B0D7D8', w: 1060, h: 680, render: renderPhotos, flush: true },
     projects: { title: 'Projects', icon: 'folder', color: '#F7CBCA', w: 980, h: 620, render: renderProjects, flush: true },
     education: { title: 'Education', icon: 'cap', color: '#DDD3D3', w: 640, h: 440, render: renderEducation },
     certs: { title: 'Certificates', icon: 'award', color: '#B0D7D8', w: 640, h: 460, render: renderCerts },
@@ -46,8 +47,9 @@
     resume: { title: 'Resume.pdf', icon: 'file', color: '#F1F7F7', w: 780, h: 680, render: renderResume, flush: true },
     terminal: { title: 'Terminal', icon: 'terminal', color: '#5D6B6B', glyph: '#F7CBCA', w: 720, h: 460, render: renderTerminal, flush: true, dark: true },
   };
-  const DESKTOP_ORDER = ['about', 'skills', 'experience', 'trainings', 'projects', 'education', 'certs', 'contact', 'resume', 'terminal'];
-  const PINNED = ['about', 'projects', 'experience', 'trainings', 'skills', 'terminal', 'contact'];
+  const DESKTOP_ORDER = ['about', 'skills', 'experience', 'trainings', 'projects', 'education', 'certs', 'photos', 'contact', 'resume', 'terminal'];
+  const PINNED = ['about', 'projects', 'experience', 'trainings', 'photos', 'skills', 'terminal', 'contact'];
+  const PHOTO_ITEMS = PHOTOS.map((p) => ({ ...p, dir: 'assets/photography', caption: PHOTO_ALBUMS[p.album] }));
   const fmtDate = (iso) => new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   const GALLERY_TYPES = { all: 'All photos', community: 'Community training', public: 'Public sector', events: 'Events & booths' };
 
@@ -568,6 +570,9 @@
       let i = 0;
       if (apps.length) html += `<div class="sm-group">Apps</div>` + apps.map((id) => `<button class="sm-rec-item" style="--i:${i++}" data-open="${id}">${tile(APPS[id], 'md')}<span><b>${esc(APPS[id].title)}</b><small>App</small></span></button>`).join('');
       if (projects.length) html += `<div class="sm-group">Projects</div>` + projects.map((p) => `<button class="sm-rec-item" style="--i:${i++}" data-project="${p.id}">${tile({ ...APPS.projects, color: p.color }, 'md')}<span><b>${esc(p.name)}</b><small>${esc(p.type === 'work' ? 'Work project' : 'Academic project')}</small></span></button>`).join('');
+      if ((q.length >= 3 && 'photography photos pictures hobby camera'.includes(q)) || Object.values(PHOTO_ALBUMS).some((a) => a.toLowerCase().includes(q))) {
+        html += `<div class="sm-group">Photography</div><button class="sm-rec-item" style="--i:${i++}" data-open="photos">${tile(APPS.photos, 'md')}<span><b>Photography</b><small>${PHOTOS.length} photos · hobby</small></span></button>`;
+      }
       const trs = TRAININGS.filter((t) => (t.programme + ' ' + t.venue + ' ' + t.place + ' trainer training nadi').toLowerCase().includes(q));
       if (trs.length) html += `<div class="sm-group">Trainings</div>` + trs.map((t) => `<button class="sm-rec-item" style="--i:${i++}" data-open="trainings">${tile(APPS.trainings, 'md')}<span><b>${esc(t.venue)}</b><small>${esc(t.programme)} · ${esc(fmtDate(t.date))}</small></span></button>`).join('');
       if (skills.length) html += `<div class="sm-group">Skills</div>` + skills.slice(0, 8).map((k) => `<button class="sm-rec-item" style="--i:${i++}" data-open="skills">${tile(APPS.skills, 'md')}<span><b>${esc(k.s)}</b><small>${esc(k.g)}</small></span></button>`).join('');
@@ -848,6 +853,82 @@
     requestAnimationFrame(draw);
   }
 
+  function renderPhotos(b, w) {
+    let album = 'all';
+    let row = 190;
+    const count = (k) => (k === 'all' ? PHOTO_ITEMS.length : PHOTO_ITEMS.filter((p) => p.album === k).length);
+    const cover = (k) => (k === 'all' ? PHOTO_ITEMS[33] : PHOTO_ITEMS.find((p) => p.album === k));
+    b.innerHTML = `
+      <div class="ph">
+        <aside class="ph-side">
+          <div class="ph-side-h">Albums</div>
+          ${Object.keys(PHOTO_ALBUMS).map((k) => `
+            <button class="ph-alb" data-alb="${k}">
+              <img src="assets/photography/thumbs/${cover(k).file}.jpg" alt="" loading="lazy">
+              <span><b>${esc(PHOTO_ALBUMS[k])}</b><small>${count(k)} photos</small></span>
+            </button>`).join('')}
+        </aside>
+        <div class="ph-main">
+          <div class="ph-tools">
+            <div class="ph-title"><b class="ph-alb-name"></b><small class="ph-alb-n"></small></div>
+            <label class="ph-zoom" title="Thumbnail size">${icon('grid')}<input type="range" min="120" max="320" step="10" value="${row}" aria-label="Thumbnail size"></label>
+            <button class="btn btn-dark ph-play">${icon('play')}Slideshow</button>
+          </div>
+          <div class="ph-scroll">
+            <header class="ph-hero">
+              <div class="ph-hero-bg"></div>
+              <div class="ph-hero-in">
+                <span class="eyebrow">Hobby</span>
+                <h2>Through my lens</h2>
+                <p>${esc(PHOTO_INTRO)}</p>
+              </div>
+            </header>
+            <div class="ph-chips"></div>
+            <div class="ph-grid"></div>
+          </div>
+        </div>
+      </div>`;
+    const grid = $('.ph-grid', b), scroll = $('.ph-scroll', b);
+    const list = () => PHOTO_ITEMS.filter((p) => album === 'all' || p.album === album);
+    const heroImgs = [33, 26, 15, 41, 29].map((n) => PHOTO_ITEMS[n]);
+    $('.ph-hero-bg', b).innerHTML = heroImgs.map((p, i) => `<img src="assets/photography/${p.file}.jpg" alt="" class="${i ? '' : 'on'}" loading="lazy">`).join('');
+    let hi = 0;
+    const heroTimer = setInterval(() => {
+      if (!document.body.contains(b)) return clearInterval(heroTimer);
+      const imgs = $$('.ph-hero-bg img', b);
+      imgs[hi].classList.remove('on');
+      hi = (hi + 1) % imgs.length;
+      imgs[hi].classList.add('on');
+    }, 5000);
+    w.api.onClose = () => clearInterval(heroTimer);
+
+    const draw = () => {
+      const items = list();
+      $$('.ph-alb', b).forEach((x) => x.classList.toggle('active', x.dataset.alb === album));
+      $('.ph-alb-name', b).textContent = PHOTO_ALBUMS[album];
+      $('.ph-alb-n', b).textContent = `${items.length} photos`;
+      $('.ph-chips', b).innerHTML = Object.keys(PHOTO_ALBUMS).map((k) => `<button class="gal-f${k === album ? ' active' : ''}" data-alb="${k}">${esc(PHOTO_ALBUMS[k])}<em>${count(k)}</em></button>`).join('');
+      grid.innerHTML = items.map((p, i) => {
+        const r = p.w / p.h;
+        return `<button class="ph-item" data-ph="${p.file}" style="--r:${r.toFixed(3)};--i:${Math.min(i, 24)}" aria-label="Open photo ${i + 1} of ${items.length}">
+          <img src="assets/photography/thumbs/${p.file}.jpg" alt="${esc(p.caption)} photo by ${esc(PROFILE.name)}" loading="lazy" decoding="async" onload="this.classList.add('ok')">
+        </button>`;
+      }).join('') + '<i class="ph-fill"></i>';
+    };
+    const setRow = (v) => { row = +v; grid.style.setProperty('--row', row + 'px'); };
+
+    b.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-alb]');
+      if (a) { album = a.dataset.alb; draw(); scroll.scrollTo({ top: album === 'all' ? 0 : $('.ph-chips', b).offsetTop - 8, behavior: reduceMotion ? 'auto' : 'smooth' }); return; }
+      const ph = e.target.closest('[data-ph]');
+      if (ph) { const items = list(); Lightbox.open(items, items.findIndex((p) => p.file === ph.dataset.ph), $('img', ph)); return; }
+      if (e.target.closest('.ph-play')) Lightbox.open(list(), 0, null, true);
+    });
+    $('.ph-zoom input', b).addEventListener('input', (e) => setRow(e.target.value));
+    setRow(isMobile() ? 130 : row);
+    draw();
+  }
+
   function countUp(root) {
     $$('[data-count]', root).forEach((el) => {
       const end = parseInt(el.dataset.count, 10);
@@ -871,7 +952,11 @@
       el.setAttribute('role', 'dialog');
       el.setAttribute('aria-label', 'Photo viewer');
       el.innerHTML = `
-        <button class="lb-btn lb-x" aria-label="Close">${icon('x')}</button>
+        <div class="lb-top">
+          <button class="lb-btn lb-play" aria-label="Start slideshow" title="Slideshow">${icon('play')}</button>
+          <button class="lb-btn lb-x" aria-label="Close">${icon('x')}</button>
+        </div>
+        <div class="lb-progress"><i></i></div>
         <button class="lb-btn lb-prev" aria-label="Previous photo">${icon('chevronL')}</button>
         <figure class="lb-fig"><img alt=""><figcaption><span class="lb-cap"></span><small class="lb-n"></small></figcaption></figure>
         <button class="lb-btn lb-next" aria-label="Next photo">${icon('chevronR')}</button>
@@ -879,8 +964,9 @@
       document.body.appendChild(el);
       el.addEventListener('click', (e) => {
         if (e.target === el || e.target.closest('.lb-x')) this.close();
-        else if (e.target.closest('.lb-prev')) this.go(-1);
-        else if (e.target.closest('.lb-next')) this.go(1);
+        else if (e.target.closest('.lb-play')) this.toggleSlides();
+        else if (e.target.closest('.lb-prev')) { this.stopSlides(); this.go(-1); }
+        else if (e.target.closest('.lb-next')) { this.stopSlides(); this.go(1); }
         else { const s = e.target.closest('[data-lb]'); if (s) this.show(+s.dataset.lb); }
       });
       let sx = null;
@@ -888,20 +974,45 @@
       el.addEventListener('touchend', (e) => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) this.go(dx < 0 ? 1 : -1); sx = null; });
       this.el = el;
     },
-    open(list, i, fromImg) {
+    dir(g) { return g.dir || 'assets/events'; },
+    open(list, i, fromImg, slideshow) {
       if (!this.el) this.build();
       this.list = list;
-      $('.lb-strip', this.el).innerHTML = list.map((g, k) => `<button data-lb="${k}" aria-label="Photo ${k + 1}"><img src="assets/events/thumbs/${esc(g.file)}.jpg" alt="" loading="lazy"></button>`).join('');
+      $('.lb-strip', this.el).innerHTML = list.map((g, k) => `<button data-lb="${k}" aria-label="Photo ${k + 1}"><img src="${this.dir(g)}/thumbs/${esc(g.file)}.jpg" alt="" loading="lazy"></button>`).join('');
       this.el.classList.add('open');
       this.show(Math.max(0, i), fromImg);
+      if (slideshow) this.startSlides();
     },
+    startSlides() {
+      this.stopSlides();
+      this.playing = true;
+      this.el.classList.add('playing');
+      $('.lb-play', this.el).innerHTML = icon('pause');
+      $('.lb-play', this.el).setAttribute('aria-label', 'Pause slideshow');
+      const bar = $('.lb-progress i', this.el);
+      const tick = () => {
+        bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)'; void bar.offsetWidth;
+        bar.style.transition = 'transform 4s linear'; bar.style.transform = 'scaleX(1)';
+        this.timer = setTimeout(() => { this.go(1); tick(); }, 4000);
+      };
+      tick();
+    },
+    stopSlides() {
+      clearTimeout(this.timer);
+      if (!this.el || !this.playing) return;
+      this.playing = false;
+      this.el.classList.remove('playing');
+      $('.lb-play', this.el).innerHTML = icon('play');
+      $('.lb-play', this.el).setAttribute('aria-label', 'Start slideshow');
+    },
+    toggleSlides() { if (this.playing) this.stopSlides(); else this.startSlides(); },
     show(i, fromImg) {
       const n = this.list.length;
       const dir = i > this.i ? 1 : -1;
       this.i = (i + n) % n;
       const g = this.list[this.i];
       const img = $('.lb-fig img', this.el);
-      img.src = `assets/events/${g.file}.jpg`;
+      img.src = `${this.dir(g)}/${g.file}.jpg`;
       img.alt = g.caption;
       $('.lb-cap', this.el).textContent = g.caption;
       $('.lb-n', this.el).textContent = `${this.i + 1} / ${n}`;
@@ -924,6 +1035,7 @@
     go(d) { this.show(this.i + d); },
     close() {
       if (!this.el || !this.el.classList.contains('open')) return;
+      this.stopSlides();
       this.el.classList.remove('open');
     },
     isOpen() { return !!this.el && this.el.classList.contains('open'); },
@@ -1071,7 +1183,7 @@
         print('<span class="t-head">Available commands</span>');
         [
           ['whoami', 'Who is Raimi?'], ['about', 'Professional profile'], ['skills', 'Skills by category'],
-          ['experience', 'Work history'], ['trainings', 'Trainings I have delivered'], ['projects', 'List projects'], ['project <n>', 'Open a project'],
+          ['experience', 'Work history'], ['trainings', 'Trainings I have delivered'], ['photos', 'My photography'], ['projects', 'List projects'], ['project <n>', 'Open a project'],
           ['education', 'Studies'], ['certs', 'Certifications'], ['contact', 'How to reach me'],
           ['open <app>', 'Open a window (about, skills, projects…)'], ['scene <1-4>', 'Change wallpaper'],
           ['neofetch', 'System info'], ['simple', 'Open the simple view'], ['date', 'Current date & time'],
@@ -1095,6 +1207,12 @@
         TRAININGS.forEach((t) => print(`  <span class="t-pink">${esc(fmtDate(t.date).padEnd(18))}</span>${esc(t.programme)} <span class="t-dim">— ${esc(t.venue)}, ${esc(t.place)}${t.online ? ' (online)' : ''}</span>`));
         line(PUBLIC_SECTOR_NOTE, 't-dim');
         line("Type 'open trainings' to see the photo gallery.", 't-dim');
+      },
+      photos: () => {
+        line(PHOTO_INTRO, 't-pink');
+        Object.keys(PHOTO_ALBUMS).filter((k) => k !== 'all').forEach((k) => print(`  <span class="t-teal">${esc(PHOTO_ALBUMS[k].padEnd(20))}</span>${PHOTOS.filter((p) => p.album === k).length} photos`));
+        line('Opening Photography…', 't-dim');
+        WM.open('photos');
       },
       certs: () => CERTS.forEach((c) => print(`  <span class="t-pink">★</span> ${esc(c.name)} <span class="t-dim">— ${esc(c.issuer)}, ${esc(c.date)}</span>`)),
       contact: () => {
@@ -1200,7 +1318,7 @@
       $('#simple').innerHTML = `
         <nav class="s-nav">
           <span class="s-logo">${logo()}<span>${esc(p.name)}</span></span>
-          <div class="s-links"><a href="#s-about">About</a><a href="#s-skills">Skills</a><a href="#s-exp">Experience</a><a href="#s-train">Trainings</a><a href="#s-proj">Projects</a><a href="#s-edu">Education</a><a href="#s-contact">Contact</a></div>
+          <div class="s-links"><a href="#s-about">About</a><a href="#s-skills">Skills</a><a href="#s-exp">Experience</a><a href="#s-train">Trainings</a><a href="#s-photos">Photography</a><a href="#s-proj">Projects</a><a href="#s-edu">Education</a><a href="#s-contact">Contact</a></div>
           <button class="btn btn-dark" data-action="desktop">${icon('square')}Desktop view</button>
         </nav>
         <header class="s-hero">
@@ -1220,13 +1338,18 @@
         </section></div>
         <section class="s-sec rv" id="s-proj"><h2>Projects</h2><div class="s-proj-grid">${PROJECTS.map((x) => `<article class="card s-proj">${x.link ? `<a class="ex-shot" href="${esc(x.link)}" target="_blank" rel="noopener" aria-label="Visit ${esc(x.linkLabel)}">${thumb(x)}<span class="ex-shot-cta">${icon('external')}Visit site</span></a>` : thumb(x)}<span class="eyebrow">${x.type === 'work' ? 'Work' : 'Academic'}</span><h3>${esc(x.name)}</h3><p>${esc(x.summary)}</p><div class="chips">${x.tags.map((t) => `<span class="chip pink">${esc(t)}</span>`).join('')}</div></article>`).join('')}</div></section>
         <div class="s-alt"><section class="s-sec rv" id="s-edu"><h2>Education & certifications</h2><div class="edu-list">${EDUCATION.map((e) => `<div class="card edu-card">${tile({ color: '#F7CBCA', icon: 'cap' }, 'md')}<div><h3>${esc(e.degree)}</h3><p>${esc(e.school)} · ${esc(e.place)} · ${esc(e.period)}</p></div></div>`).join('')}${CERTS.map((c) => `<div class="card cert-card">${tile({ color: '#B0D7D8', icon: 'award' }, 'md')}<div><h3>${esc(c.name)}</h3><p>${esc(c.issuer)} · ${esc(c.date)}</p></div></div>`).join('')}</div></section></div>
-        <section class="s-sec rv" id="s-contact"><h2>Contact</h2><div class="contact-side" style="max-width:520px"><a class="card c-row" href="mailto:${esc(p.email)}">${tile(APPS.contact, 'md')}<div><small>Email</small><b>${esc(p.email)}</b></div></a><a class="card c-row" href="${esc(p.github)}" target="_blank" rel="noopener">${tile({ color: '#D5E5E5', icon: 'github' }, 'md')}<div><small>GitHub</small><b>${esc(p.githubLabel)}</b></div>${icon('external')}</a><div class="card c-row">${tile({ color: '#DDD3D3', icon: 'pin' }, 'md')}<div><small>Location</small><b>${esc(p.location)}</b></div></div></div></section>
+        <section class="s-sec rv s-ph" id="s-photos"><h2>Photography</h2><p class="lead">${esc(PHOTO_INTRO)}</p>
+          <div class="ph-grid" style="--row:170px">${PHOTO_ITEMS.map((p, i) => `<button class="ph-item" data-sph="${p.file}" style="--r:${(p.w / p.h).toFixed(3)};--i:0" aria-label="Open photo ${i + 1}"><img src="assets/photography/thumbs/${p.file}.jpg" alt="${esc(p.caption)} photo" loading="lazy" decoding="async" onload="this.classList.add('ok')"></button>`).join('')}<i class="ph-fill"></i></div>
+        </section>
+        <div class="s-alt"><section class="s-sec rv" id="s-contact"><h2>Contact</h2><div class="contact-side" style="max-width:520px"><a class="card c-row" href="mailto:${esc(p.email)}">${tile(APPS.contact, 'md')}<div><small>Email</small><b>${esc(p.email)}</b></div></a><a class="card c-row" href="${esc(p.github)}" target="_blank" rel="noopener">${tile({ color: '#D5E5E5', icon: 'github' }, 'md')}<div><small>GitHub</small><b>${esc(p.githubLabel)}</b></div>${icon('external')}</a><div class="card c-row">${tile({ color: '#DDD3D3', icon: 'pin' }, 'md')}<div><small>Location</small><b>${esc(p.location)}</b></div></div></div></section></div>
         <footer class="s-foot">© ${new Date().getFullYear()} ${esc(p.fullName)}</footer>`;
       const io = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { root: $('#simple'), threshold: 0.12 });
       $$('#simple .rv').forEach((el) => io.observe(el));
       $('#simple').addEventListener('click', (e) => {
         const ph = e.target.closest('[data-sphoto]');
         if (ph) Lightbox.open(GALLERY, GALLERY.findIndex((g) => g.file === ph.dataset.sphoto), $('img', ph));
+        const sp = e.target.closest('[data-sph]');
+        if (sp) Lightbox.open(PHOTO_ITEMS, PHOTO_ITEMS.findIndex((g) => g.file === sp.dataset.sph), $('img', sp));
       });
       $$('#simple a[href^="#s-"]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); $(a.getAttribute('href')).scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }); }));
       this.built = true;
@@ -1373,8 +1496,9 @@
     document.addEventListener('keydown', (e) => {
       if (Lightbox.isOpen()) {
         if (e.key === 'Escape') Lightbox.close();
-        else if (e.key === 'ArrowLeft') Lightbox.go(-1);
-        else if (e.key === 'ArrowRight') Lightbox.go(1);
+        else if (e.key === 'ArrowLeft') { Lightbox.stopSlides(); Lightbox.go(-1); }
+        else if (e.key === 'ArrowRight') { Lightbox.stopSlides(); Lightbox.go(1); }
+        else if (e.key === ' ') Lightbox.toggleSlides();
         e.preventDefault();
         return;
       }
